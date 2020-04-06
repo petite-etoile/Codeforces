@@ -68,30 +68,24 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 #pragma endregion
 //fixed<<setprecision(10)<<ans<<endl;
 
-//素因数分解
-vector<int64> prime_factorization(int64 n){
-    int64 copy = n;
-    vector<int64> res;
-    for(int64 i=2;i*i<=copy;i++){
-        if(n%i==0){
-            res.push_back(i);
-        }
-        while(n%i==0){
-            n/=i;
-        }
-    }
-    if(n!=1) res.push_back(n);
-    return res;
-}
+
 
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int ans = 0;
-    for(int i=2;i*i<=1000;i++){
-        if(prime_factorization(i).size() == 1){
-            ans++;
-        }
+    int N;
+    cin >> N;
+    N>>=1;
+    vector<int> P(N);
+    REP(i,N) cin >> P[i];
+    sort(ALL(P));
+
+    int64 ans1 = 0;
+    int64 ans2 = 0;
+    REP(i,N){
+        ans1 += abs(P[i]-(2*i+1));
+        ans2 += abs(P[i]-(2*i+2));
     }
-    debug(ans)
+
+    cout << min(ans1,ans2) << bn;
 }

@@ -68,30 +68,48 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 #pragma endregion
 //fixed<<setprecision(10)<<ans<<endl;
 
-//素因数分解
-vector<int64> prime_factorization(int64 n){
-    int64 copy = n;
-    vector<int64> res;
-    for(int64 i=2;i*i<=copy;i++){
-        if(n%i==0){
-            res.push_back(i);
-        }
-        while(n%i==0){
-            n/=i;
-        }
-    }
-    if(n!=1) res.push_back(n);
-    return res;
-}
+
 
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int ans = 0;
-    for(int i=2;i*i<=1000;i++){
-        if(prime_factorization(i).size() == 1){
-            ans++;
+    int N,M;
+    cin >> N >> M;
+    const int max_M = 2000;
+    vector<bitset<max_M>> Switches(N);
+    REP(i,N){
+        string S;
+        cin >> S;
+        REP(j,M){
+            if(S[j]=='1') Switches[i].set(j);
         }
     }
-    debug(ans)
+
+    vector<bitset<max_M>> DP1(N), DP2(N);
+    REP(i,N){
+        int idx = N-1-i;
+        if(i){
+            DP1[i] = DP1[i-1];
+            DP2[idx] = DP2[idx+1];
+        }
+        DP1[i] |= Switches[i];
+        DP2[idx] |= Switches[idx];
+    }
+
+    bitset<max_M> mask;
+    REP(i,M) mask.set(i);
+    REP(i,N){
+        bitset<max_M> tmp;
+        if(i){
+            tmp |= DP1[i-1];
+        }
+        if(i+1<N){
+            tmp |= DP2[i+1];
+        }
+        if(mask == tmp){
+            cout << "YES" << bn;
+            return 0;
+        }
+    }
+    cout << "NO" << bn;
 }

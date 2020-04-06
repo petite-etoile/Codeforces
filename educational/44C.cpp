@@ -68,30 +68,39 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 #pragma endregion
 //fixed<<setprecision(10)<<ans<<endl;
 
-//素因数分解
-vector<int64> prime_factorization(int64 n){
-    int64 copy = n;
-    vector<int64> res;
-    for(int64 i=2;i*i<=copy;i++){
-        if(n%i==0){
-            res.push_back(i);
-        }
-        while(n%i==0){
-            n/=i;
-        }
-    }
-    if(n!=1) res.push_back(n);
-    return res;
-}
+
 
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int ans = 0;
-    for(int i=2;i*i<=1000;i++){
-        if(prime_factorization(i).size() == 1){
-            ans++;
-        }
+    int64 N,K,L;
+    cin >> N >> K >> L;
+    vector<int64> A(N*K);
+    REP(i,N*K) cin >> A[i];
+    sort(ALL(A));
+
+    int i=0, cnt = 1;
+    int64 ans = A[0];
+    vector<bool> used(N*K,false);
+    used[0]=true;
+    while(i+K < N*K and A[i+K]<=A[0]+L and cnt < N){
+        i += K;
+        used[i] = true;
+        ans += A[i];
+        cnt++;
     }
-    debug(ans)
+
+    while(i+1<N*K and A[i+1]<=A[0]+L) i++;
+    while(cnt<N and 0<=i){
+        if(not used[i]) {
+            ans += A[i];
+            cnt++;
+        }
+        i--;
+    }
+    if(cnt<N){
+        cout << 0 << bn;
+    }else{
+        cout << ans << endl;
+    }
 }

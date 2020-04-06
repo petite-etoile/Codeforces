@@ -68,30 +68,78 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 #pragma endregion
 //fixed<<setprecision(10)<<ans<<endl;
 
-//素因数分解
-vector<int64> prime_factorization(int64 n){
-    int64 copy = n;
-    vector<int64> res;
-    for(int64 i=2;i*i<=copy;i++){
-        if(n%i==0){
-            res.push_back(i);
+struct UnionFind{
+    int N;
+    vector<int> node;
+    UnionFind(){}
+    UnionFind(int N):N(N){
+        node.assign(N,-1);
+    }
+    int get_root(int x){
+        if (node[x]<0){
+            return x;
         }
-        while(n%i==0){
-            n/=i;
+        node[x] = get_root(node[x]);
+        return node[x];
+    }
+    void unite(int x,int y){
+        int root_x = get_root(x);
+        int root_y = get_root(y);
+        int larger,smaller;
+        if(root_x != root_y){
+            if(node[root_x] < node[root_y]){ //size of x is lager than one of y
+                larger  = root_x;
+                smaller = root_y;
+            }else{
+                larger  = root_y;
+                smaller = root_x;
+            }
+            node[larger] += node[smaller];
+            node[smaller] = larger;
         }
     }
-    if(n!=1) res.push_back(n);
-    return res;
-}
+    int size(int x){
+        return -node[x];
+    }
+    bool same(int x,int y){
+        return get_root(x) == get_root(y);
+    }
+};
+void solve(){
+    int N,K;
+    cin >> N >> K;
+    UnionFind UF(N);
+    string S;
+    cin >> S;
 
+    REP(l,N/K){
+        for(int i = l*K; i<N-K; i++){
+            UF.unite(i,i+K);
+            UF.unite(i,N-i-1);
+        }
+    }
+
+    vector<map<int,int>> group(N);
+    vector<int> group_size(N,0);
+    REP(i,N){
+        int root = UF.get_root(i);
+        group[root][S[i]]++;
+        group_size[root]++;
+    }   
+    int ans = 0;
+    REP(i,N){
+        int max_ = 0;
+        for(auto e:group[i]){
+            chmax(max_, e.second);
+        }
+        ans += group_size[i] - max_;
+    }
+    cout << ans << bn;
+}
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int ans = 0;
-    for(int i=2;i*i<=1000;i++){
-        if(prime_factorization(i).size() == 1){
-            ans++;
-        }
-    }
-    debug(ans)
+    int N;
+    cin >> N;
+    REP(i,N) solve();
 }

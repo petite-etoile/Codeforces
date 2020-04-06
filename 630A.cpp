@@ -68,30 +68,38 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 #pragma endregion
 //fixed<<setprecision(10)<<ans<<endl;
 
-//素因数分解
-vector<int64> prime_factorization(int64 n){
-    int64 copy = n;
-    vector<int64> res;
-    for(int64 i=2;i*i<=copy;i++){
-        if(n%i==0){
-            res.push_back(i);
-        }
-        while(n%i==0){
-            n/=i;
+void solve(){
+    int64 a,b,c,d;
+    cin >> a >> b >> c >> d;
+    int64 x,y,x1,y1,x2,y2;
+    cin >> x >> y >> x1 >> y1 >> x2 >> y2;
+
+    if(x1==x2){
+        if(a or b){
+            cout << "No" << bn;
+            return;
         }
     }
-    if(n!=1) res.push_back(n);
-    return res;
+    if(y1==y2){
+        if(c or d){
+            cout << "No" << bn;
+            return;
+        }
+    }
+
+    x += -a + b;
+    y += -c + d;
+    if(x1 <= x and x <= x2 and y1 <= y and y <= y2){
+        cout << "Yes" << bn;
+    }else{
+        cout << "No" << bn;
+    }
 }
 
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int ans = 0;
-    for(int i=2;i*i<=1000;i++){
-        if(prime_factorization(i).size() == 1){
-            ans++;
-        }
-    }
-    debug(ans)
+    int N;
+    cin >> N;
+    REP(i,N) solve();
 }
