@@ -69,10 +69,45 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 //fixed<<setprecision(10)<<ans<<endl;
 
 
+int N, K;
+vector<string> grid;
+vector<vector<int>> possible_count;
+void check(int h,int w){
+    bool ok1=true, ok2=true;
+    REP(i,K){
+        if(w+i>=N or grid[h][w+i] == '#') ok1 = false;
+        if(h+i>=N or grid[h+i][w] == '#') ok2 = false;
+    }
+
+    REP(i,K){
+        if(ok1) possible_count[h][w+i]++;
+        if(ok2) possible_count[h+i][w]++;
+    }
+}
 
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int N = 2;
-    cout <<  (!N&1)  << endl;
+    cin >> N >> K;
+    grid.resize(N);
+    possible_count.assign(N,vector<int>(N,0));
+
+    REP(i,N) cin >> grid[i];
+    REP(h,N){
+        REP(w,N){
+            check(h,w);
+        }
+    }
+    pair<int,int> ans=mp(0,0);
+    int ans_val = 0;
+
+    REP(h,N){
+        REP(w,N){
+            if(chmax(ans_val,possible_count[h][w])){
+                ans = mp(h,w);
+            }
+        }
+    }
+    
+    cout << ans.first + 1 << " " << ans.second + 1 << bn;
 }

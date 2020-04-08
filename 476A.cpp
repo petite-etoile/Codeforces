@@ -73,6 +73,8 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int N = 2;
-    cout <<  (!N&1)  << endl;
+    int64 k,n,s,p;
+    cin >> n>>k>>s>>p;
+    int64 ans = ((k+s-1)/s*n+p-1)/p;
+    cout << ans << endl;
 }

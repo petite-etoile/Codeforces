@@ -68,11 +68,37 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 #pragma endregion
 //fixed<<setprecision(10)<<ans<<endl;
 
+void solve(){
+    int N;
+    cin >> N;
+    vector<int> A(N);
+    REP(i,N) cin >> A[i];
+    vector<int> B(N);
+    REP(i,N) cin >> B[i];
 
+    vector<bool> exist(2,false);
+    REP(i,N){
+        if(A[i]>B[i]){ //minus
+            if(not exist[0]){
+                cout << "NO" << bn;
+                return ;
+            }
+        }else if(A[i]<B[i]){ //plus
+            if(not exist[1]){
+                cout << "NO" << bn;
+                return ;
+            }
+        }
+        exist[0] = exist[0] | A[i]==-1;
+        exist[1] = exist[1] | A[i]==1;
+    }
+    cout << "YES" << bn;
+}
 
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int N = 2;
-    cout <<  (!N&1)  << endl;
+    int N;
+    cin >> N;
+    REP(i,N) solve();
 }

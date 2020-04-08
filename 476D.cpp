@@ -73,6 +73,43 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int N = 2;
-    cout <<  (!N&1)  << endl;
+    int N,L;
+    cin >> N >> L;
+    vector<int64> A(N);
+    REP(i,N-1) cin >> A[i];
+    A[N-1] = INF;
+
+    deque<pair<int,int64>> frogs;
+    frogs.push_front(mp(0,INF));
+
+    int64 last,x,locate;
+    REP(i,N){
+        int now = i + 1;
+        int jump_frogs = 0;
+        while(frogs.size() and A[i]){
+            tie(last, x) = frogs.front(); frogs.pop_front();
+            if(last+L >= now){
+                int64 sub = min(A[i], x);
+                jump_frogs += sub;
+                A[i]-=sub;
+                x-=sub;
+            }
+            if(A[i]==0){
+                if(x) frogs.push_front(mp(last, x));
+                break;
+            }
+        }
+        frogs.push_back(mp(now, jump_frogs));
+    }
+
+
+    int ans=0;
+    while(frogs.size()){
+        tie(locate, x) = frogs.front();
+        frogs.pop_front();
+        if(locate>=N) ans += x;
+    }
+
+
+    cout << ans << endl;
 }

@@ -68,11 +68,18 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 #pragma endregion
 //fixed<<setprecision(10)<<ans<<endl;
 
-
+int64 N,K,M,D;
 
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int N = 2;
-    cout <<  (!N&1)  << endl;
+    cin >> N >> K >> M >> D;
+
+    int64 ans = M;
+    for (int64 loop=1; loop <= D; loop++){
+        int64 x = min(M,N/((loop-1)*K + 1));
+        if(x) chmax(ans, x*loop);
+        else break;
+    }
+    cout << ans << endl;
 }

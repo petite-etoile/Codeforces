@@ -56,12 +56,12 @@ ostream& operator<<(ostream& os, set<T> &S){
     return os;
 }
 template <typename T>
-ostream& operator<<(ostream& os, deque<T> &q){
-    for(auto it=q.begin();it<q.end();it++){
-        os<<*it;
-        os<<" ";
+ostream& operator<<(ostream& os, queue<T> q){
+    while(q.size()){
+        os << q.front() + 1; q.pop();
+        if(q.size()) os << " " ;
     }
-     os<<endl;
+    os<<endl;
     return os;
 }
 vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
@@ -73,6 +73,44 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int N = 2;
-    cout <<  (!N&1)  << endl;
+    int64 N,K;
+    cin >> N >> K;
+    string S;
+    cin >> S;
+    int max_operation = 0;
+
+    vector<queue<int>> ans;
+    while(true){
+        queue<int> tmp;
+        REP(i,N-1){
+            if(S.substr(i,2) == "RL"){
+                max_operation++;
+                tmp.push(i);
+                S[i] = 'L';
+                S[++i] = 'R';
+            }
+        }   
+        if(tmp.empty()) break;
+        ans.emplace_back(tmp);
+    }
+    // debug(ans)
+    // debug("A")
+    // debug(mp(ans.size(), max_operation))
+    if(ans.size() > K or max_operation < K){
+        cout << -1 << bn;
+        return 0;
+    }else{
+        int margin = K - ans.size();
+        REP(i,ans.size()){
+            while(margin and ans[i].size()){
+                // debug(margin)
+                cout << 1 << " " << ans[i].front() + 1 << bn;
+                ans[i].pop();
+                if(ans[i].size()) margin--;
+            }
+            if(ans[i].size()){
+                cout << ans[i].size() << " " << ans[i];
+            }
+        }
+    }
 }

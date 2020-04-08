@@ -73,6 +73,37 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int N = 2;
-    cout <<  (!N&1)  << endl;
+    int64 N;
+    cin >> N;
+    vector<int64> A(N);
+    REP(i,N) cin >> A[i];
+    map<int64,int64> last;
+    vector<int64> cumsum(N,0);
+    REP(i,N){
+        if(i) cumsum[i] = cumsum[i-1];
+        cumsum[i] += A[i];
+        last[cumsum[i]]=-2;
+    }
+    last[0] = 0;
+    int64 ans=N*(N+1)/2;
+    int64 last_left=-1;
+    REP(i,N){
+        // ans -= cnt[cumsum[i+1]];
+        // cerr << bn;
+        // debug(mp(cumsum[i],last[cumsum[i]]))
+        if(last[cumsum[i]] != -2){
+            if(last[cumsum[i]]-last_left >= 0){
+                ans -= (last[cumsum[i]]-last_left) * (N-i);
+                // debug(mp(last_left,last[cumsum[i]]))
+                // debug(((last[cumsum[i]]-last_left) * (N-i)))
+                // debug(ans)
+                last_left = last[cumsum[i]];
+            }
+        }
+        last[cumsum[i]] = i+1;
+        // debug(N-i)
+        // debug(cumsum[i+1])
+        // cnt[cumsum[i+1]]++;
+    }
+    cout << ans << endl;
 }

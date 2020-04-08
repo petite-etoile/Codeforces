@@ -30,9 +30,8 @@ ostream& operator<<(ostream& os, const vector<T> &V){
     int N = V.size();
     REP(i,N){
         os << V[i];
-        if (i!=N-1) os << " ";
+        os << "\n";
     }
-    os << "\n";
     return os;
 }
 template <typename T,typename S>
@@ -68,11 +67,33 @@ vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 #pragma endregion
 //fixed<<setprecision(10)<<ans<<endl;
 
-
+void solve(){
+    int H,W;
+    cin >> H >> W;
+    vector<string> ans(H,string(W,'0'));
+    if(not ((H*W)&1)) {
+        REP(i,H){
+            REP(j,W){
+                if((i+j)&1) ans[i][j] = 'B';
+                else ans[i][j] = 'W';
+            }   
+        }
+        ans[0][0] = 'B';
+    }else{
+        REP(i,H){
+            REP(j,W){
+                if((i+j)&1) ans[i][j] = 'W';
+                else ans[i][j] = 'B';
+            }   
+        }
+    }
+    cout << ans;
+}
 
 int main(){
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int N = 2;
-    cout <<  (!N&1)  << endl;
+    int N;
+    cin >> N;
+    REP(i,N) solve();
 }
