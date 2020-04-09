@@ -112,11 +112,10 @@ void solve(){
     string S;
     cin >> S;
 
-    REP(l,N/K){
-        for(int i = l*K; i<N-K; i++){
-            UF.unite(i,i+K);
-            UF.unite(i,N-i-1);
-        }
+    REP(i,N){
+        if(i+K<N) UF.unite(i,i+K);
+        UF.unite(i,N-i-1);
+        
     }
 
     vector<map<int,int>> group(N);

@@ -61,94 +61,35 @@ ostream& operator<<(ostream& os, deque<T> &q){
         os<<*it;
         os<<" ";
     }
-     os<<endl;
+    os<<endl;
     return os;
 }
 vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
 #pragma endregion
 //fixed<<setprecision(10)<<ans<<endl;
 
-struct Eratosthenes{
-    int N;
-    vector<int> data;
-    Eratosthenes(int N):N(N){
-        data.assign(N+1,-1);
-        for(int64 i=2;i*i<=N;i++){
-            if(data[i]!=-1) continue;
-            for (int j=i; j<=N; j+=i){
-                data[j] = i;
-            }
-        }
-    }
-
-    map<int,int> prime_factorization(int X){
-        map<int,int> pri;
-        while (data[X]!=-1){
-            int prime = data[X];
-            pri[prime] += 1;
-            X /= prime;
-        }
-        if(X!=1) pri[X] += 1;
-
-        return pri;
-    }
-
-    bool is_prime(int n){
-        return n >= 2 and data[n] == n or data[n] == -1;
-    }
-
-    int get_largest_prime_factor(int n){
-        auto tmp = prime_factorization(n);
-        int res = 0;
-        for(auto& e:tmp) if(res < e.first) res = e.first;
-        return res;
-    }
-
-    int get_smallest_prime_factor(int n){
-        auto tmp = prime_factorization(n);
-        int res = n;
-        for(auto& e:tmp) if(res > e.first) res = e.first;
-        return res;
-    }
-
-};
 
 
-vector<int> primes;
-void solve(){
+int main(){
+    cin.tie(nullptr);
+    ios::sync_with_stdio(false);
     int N;
     cin >> N;
     vector<int> A(N);
     REP(i,N) cin >> A[i];
-    vector<int> ans(N);
+
+    int ans = 360;
+    vector<int> cumsum(N+1);
+    REP(i,N) cumsum[i+1] = cumsum[i] + A[i];
     REP(i,N){
-        REP(j,primes.size()){
-            if(A[i]%primes[j] == 0){
-                ans[i] = j;
-                break;
+        REP(j,N+1){
+            if(i<j)
+                chmin(ans, abs(180-(cumsum[j]-cumsum[i])) * 2);
+            else {
+                chmin(ans, abs(180-(cumsum[i]+360-cumsum[j]) * 2) );
             }
         }
     }
-    int now = 0;
-    vector<int> dict(primes.size(), -1);
-    for(auto& a:ans){
-        if(dict[a]==-1) dict[a] = ++now;
-        a = dict[a];
-    }
-    cout << now << bn << ans;
-}
-int main(){
-    cin.tie(0);
-    ios::sync_with_stdio(false);
-    Eratosthenes E(100);
-    for(int i=2;i*i<=1000;i++){
-        if(E.is_prime(i)){
-            primes.push_back(i);
-        }
-    }
 
-    int N;
-    cin >> N;
-    REP(i,N) solve();
-
+    cout << ans << endl;
 }

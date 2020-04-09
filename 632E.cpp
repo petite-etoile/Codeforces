@@ -128,6 +128,9 @@ int main(){
 }
 
 /*
+#testing on 3*3
+
+
 from itertools import permutations
 
 N = 3

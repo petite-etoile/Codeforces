@@ -12,7 +12,6 @@
 #include <bits/stdc++.h>
 typedef long long int64;
 using namespace std;
-using P = pair<int64, int64>;
 typedef vector<int> vi;
 const int MOD = (int)1e9 + 7;
 const int64 INF = 1LL << 62;
@@ -44,6 +43,11 @@ ostream& operator<<(ostream& os, pair<T,S> const&P){
     os << ")";
     return os;
 }
+template <typename T,typename S>
+ostream& operator<<(ostream& os, map<T,S> const&m){
+    for(auto e:m) os << e;
+    return os;
+}
 template <typename T>
 ostream& operator<<(ostream& os, set<T> &S){
     auto it=S.begin();
@@ -61,7 +65,7 @@ ostream& operator<<(ostream& os, deque<T> &q){
         os<<*it;
         os<<" ";
     }
-     os<<endl;
+    os<<endl;
     return os;
 }
 vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
@@ -113,42 +117,18 @@ struct Eratosthenes{
 
 };
 
-
-vector<int> primes;
-void solve(){
-    int N;
-    cin >> N;
-    vector<int> A(N);
-    REP(i,N) cin >> A[i];
-    vector<int> ans(N);
-    REP(i,N){
-        REP(j,primes.size()){
-            if(A[i]%primes[j] == 0){
-                ans[i] = j;
-                break;
-            }
-        }
-    }
-    int now = 0;
-    vector<int> dict(primes.size(), -1);
-    for(auto& a:ans){
-        if(dict[a]==-1) dict[a] = ++now;
-        a = dict[a];
-    }
-    cout << now << bn << ans;
-}
 int main(){
-    cin.tie(0);
+    cin.tie(nullptr);
     ios::sync_with_stdio(false);
-    Eratosthenes E(100);
-    for(int i=2;i*i<=1000;i++){
-        if(E.is_prime(i)){
-            primes.push_back(i);
-        }
-    }
-
     int N;
     cin >> N;
-    REP(i,N) solve();
-
+    vector<int> P;
+    Eratosthenes Eratos(N);
+    vector<int> ans;
+    for(int i=2;i<=N;i++){
+        if(Eratos.is_prime(i)) ans.emplace_back(1);
+        else ans.emplace_back(i / Eratos.get_smallest_prime_factor(i));
+    }
+    sort(ALL(ans));
+    cout << ans;
 }

@@ -61,7 +61,7 @@ ostream& operator<<(ostream& os, deque<T> &q){
         os<<*it;
         os<<" ";
     }
-     os<<endl;
+    os<<endl;
     return os;
 }
 vector<pair<int,int>> dxdy = {mp(0,1),mp(1,0),mp(-1,0),mp(0,-1)};
@@ -94,7 +94,7 @@ struct Eratosthenes{
     }
 
     bool is_prime(int n){
-        return n >= 2 and data[n] == n or data[n] == -1;
+        return (n >= 2) and (data[n] == n or data[n] == -1);
     }
 
     int get_largest_prime_factor(int n){
@@ -113,42 +113,119 @@ struct Eratosthenes{
 
 };
 
+int64 pow(int a,int b,int mod){
+    vector<bool> bit;
+    for(b=b;b>0;b>>=1){
+        bit.push_back(b&1);
+    }
+    vector<int64> fac(bit.size()); fac[0] = a;
+    int64 res = 1;
+    for(int i=1;i<bit.size();i++){
+        fac[i] = (fac[i-1] * fac[i-1])%mod;
+    }
+    for(int i=0;i<bit.size();i++){
+        if(bit[i]) res*=fac[i];
+        res%=mod;
+    }
+    return res;
+}
 
-vector<int> primes;
-void solve(){
+
+//mint
+struct mint {
+    int64 x;
+    mint(int64 x=0):x((x+2*MOD)%MOD){}
+    mint& operator+=(const mint a) {
+        if ((x += a.x) >= MOD) x -= MOD;
+        return *this;
+    }
+    mint& operator-=(const mint a) {
+        if ((x += MOD-a.x) >= MOD) x -= MOD;
+        return *this;
+    }
+    mint& operator*=(const mint a) {
+        (x *= a.x) %= MOD;
+        return *this;
+    }
+    mint operator+(const mint a) const {
+        mint res(*this);
+        return res+=a;
+    }
+    mint operator-(const mint a) const {
+        mint res(*this);
+        return res-=a;
+    }
+    mint operator*(const mint a) const {
+        mint res(*this);
+        return res*=a;
+    }
+    mint pow(int64 t) const {
+        if (!t) return 1;
+        mint a = pow(t>>1);
+        a *= a;
+        if (t&1) a *= *this;
+        return a;
+    }
+
+    // for prime MOD
+    mint inv() const {
+        return pow(MOD-2);
+    }
+    mint& operator/=(const mint a) {
+        return (*this) *= a.inv();
+    }
+    mint operator/(const mint a) const {
+        mint res(*this);
+        return res/=a;
+    }
+};
+ostream& operator<<(ostream& os, mint a){
+    os << a.x;
+    return os;
+}
+
+int main(){
+    cin.tie(nullptr);
+    ios::sync_with_stdio(false);
     int N;
     cin >> N;
     vector<int> A(N);
     REP(i,N) cin >> A[i];
-    vector<int> ans(N);
-    REP(i,N){
-        REP(j,primes.size()){
-            if(A[i]%primes[j] == 0){
-                ans[i] = j;
-                break;
+    vector<int> cnt(71);
+    for(auto a:A) cnt[a]++;
+    vector<int> prime_factors;
+    Eratosthenes E(70);
+    REP(i,70){
+        if(E.is_prime(i)) prime_factors.emplace_back(i);
+    }
+    size_t P_size = prime_factors.size();
+
+    vector<int> factor_bit(71);
+    for(int a=1;a<71;a++){
+        if(not cnt[a]) continue;
+        REP(j,P_size){
+            int b = a;
+            while(b%prime_factors[j] == 0){
+                factor_bit[a] ^= (1 << j);
+                b /= prime_factors[j];
             }
         }
-    }
-    int now = 0;
-    vector<int> dict(primes.size(), -1);
-    for(auto& a:ans){
-        if(dict[a]==-1) dict[a] = ++now;
-        a = dict[a];
-    }
-    cout << now << bn << ans;
-}
-int main(){
-    cin.tie(0);
-    ios::sync_with_stdio(false);
-    Eratosthenes E(100);
-    for(int i=2;i*i<=1000;i++){
-        if(E.is_prime(i)){
-            primes.push_back(i);
+    }   
+
+    vector<vector<mint>> DP(2,vector<mint>(1<<P_size, 0));
+    DP[1][0] = 1;
+    REP(a,71){
+        int c = cnt[a];
+        if(not c) continue;
+        DP[0] = DP[1];
+        DP[1].assign(1<<P_size,0);
+        mint power = mint(2).pow(c-1);
+        REP(mask, 1<<P_size){
+            DP[1][mask] += DP[0][mask] * power; //偶数個
+            DP[1][mask ^ factor_bit[a]] += DP[0][mask] * power;
         }
-    }
+    } 
+    mint ans=DP[1][0] - 1;
 
-    int N;
-    cin >> N;
-    REP(i,N) solve();
-
+    cout << ans << endl;
 }
